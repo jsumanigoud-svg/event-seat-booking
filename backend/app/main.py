@@ -14,7 +14,28 @@ from .auth import router as auth_router
 
 Base.metadata.create_all(bind=engine)
 
+from .database import SessionLocal
+from .models import Admin
+from .auth import pwd_context
 
+db = SessionLocal()
+
+try:
+    admin = db.query(Admin).filter(Admin.username == "admin").first()
+
+    if admin:
+        admin.password_hash = pwd_context.hash("admin123")
+    else:
+        admin = Admin(
+            username="admin",
+            password_hash=pwd_context.hash("admin123")
+        )
+        db.add(admin)
+
+    db.commit()
+
+finally:
+    db.close()
 # =========================================================
 # CREATE FASTAPI APP
 # =========================================================
