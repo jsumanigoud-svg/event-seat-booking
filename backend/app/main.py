@@ -38,11 +38,15 @@ app.add_middleware(
 # CORS
 # =========================================================
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "https://event-seat-booking-mu.vercel.app",
+        "https://event-seat-booking-3wu8odtt-event-seat-booking.vercel.app",
         "http://localhost:3000",
-        "http://127.0.0.1:3000",
+        "http://localhost:3001",
     ],
     allow_credentials=True,
     allow_methods=["*"],
