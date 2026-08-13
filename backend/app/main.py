@@ -70,8 +70,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "https://event-seat-booking-3wu8odltt-event-seat-booking.vercel.app",
         "https://event-seat-booking-mu.vercel.app",
-        "https://event-seat-booking-3wu8odtt-event-seat-booking.vercel.app",
         "http://localhost:3000",
         "http://localhost:3001",
     ],
