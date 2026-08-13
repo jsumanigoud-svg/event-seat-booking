@@ -23,28 +23,17 @@ app = FastAPI(
     title="Event Seat Booking API",
     version="1.0.0"
 )
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://event-seat-booking-mu.vercel.app",
-        "http://localhost:3000",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 # =========================================================
 # CORS
 # =========================================================
 
-from fastapi.middleware.cors import CORSMiddleware
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://event-seat-booking-mu.vercel.app",
-        "https://event-seat-booking-3wu8odtt-event-seat-booking.vercel.app",
+        "https://event-seat-booking-3wu8odltt-event-seat-booking.vercel.app",
         "http://localhost:3000",
         "http://localhost:3001",
     ],
