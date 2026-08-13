@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .database import Base, engine
+from .database import Base, engine, SessionLocal
 from . import models
 from .events import router as events_router
 from .booking import router as booking_router
 from .auth import router as auth_router
+from .auth import pwd_context
 
 
 # =========================================================
@@ -13,6 +14,31 @@ from .auth import router as auth_router
 # =========================================================
 
 Base.metadata.create_all(bind=engine)
+# Create/reset default admin
+db = SessionLocal()
+
+try:
+    admin = db.query(models.Admin).filter(
+        models.Admin.username == "admin"
+    ).first()
+
+    password_hash = pwd_context.hash("admin123")
+
+    if admin:
+        admin.password_hash = password_hash
+        print("Admin password reset successfully.")
+    else:
+        admin = models.Admin(
+            username="admin",
+            password_hash=password_hash
+        )
+        db.add(admin)
+        print("Admin user created successfully.")
+
+    db.commit()
+
+finally:
+    db.close()
 
 from .database import SessionLocal
 from .models import Admin
