@@ -1,85 +1,101 @@
 # Event Seat Booking System
 
+A full-stack event seat booking system with admin authentication, event management, dynamic seat generation, and concurrency-safe seat booking.
+
 ## Live Demo
 
-Frontend:
+**Frontend:**  
 https://event-seat-booking-3wu8odltt-event-seat-booking.vercel.app
 
-Backend API:
+**Backend API:**  
 https://event-seat-booking-pkru.onrender.com
 
-Swagger API Documentation:
+**Swagger API Documentation:**  
 https://event-seat-booking-pkru.onrender.com/docs
+
+---
 
 ## Features
 
 - Admin authentication using JWT
-- Event creation
+- Admin event creation
 - Dynamic seat generation
 - Seat selection
 - Seat booking
 - Prevention of duplicate seat bookings
+- Database-level concurrency protection
 - MySQL database
 - REST API using FastAPI
 - Next.js frontend
+- Responsive seat-booking interface
 - CORS configuration for deployed frontend
+
+---
 
 ## Tech Stack
 
 ### Frontend
+
 - Next.js
 - React
 - TypeScript
 
 ### Backend
+
 - FastAPI
 - Python
 - SQLAlchemy
 - JWT authentication
 
 ### Database
+
 - MySQL
 
 ### Deployment
+
 - Vercel — Frontend
 - Render — Backend
 - MySQL — Live database
+
+---
 
 ## Database Design
 
 The system uses the following main tables:
 
-- Admin
-- Event
-- Seat
-- Booking
-- BookingSeat
+### Admin
 
-### Relationships
+Stores administrator login credentials.
 
-Event → Seats  
-Booking → BookingSeats  
-Seat → BookingSeat
+- `id`
+- `username`
+- `password_hash`
 
-Each seat belongs to an event and has a unique row/column position.
+Passwords are stored as hashed values rather than plain text.
 
-## Concurrency Handling
+### Event
 
-The system prevents two users from booking the same seat simultaneously.
+Stores event information.
 
-The `booking_seats` table uses a database-level unique constraint on:
+- `id`
+- `name`
+- `event_date`
+- `rows`
+- `columns`
 
+### Seat
+
+Stores individual seats belonging to an event.
+
+- `id`
 - `event_id`
-- `seat_id`
+- `row_number`
+- `column_number`
+- `is_blocked`
 
-This ensures that the same seat cannot be inserted into two bookings for the same event.
+Each seat belongs to an event.
 
-If two requests attempt to book the same seat concurrently, the database rejects the duplicate operation rather than allowing the seat to be double-booked.
+A unique constraint on:
 
-## Setup
-
-### Backend
-
-```bash
-cd backend
-pip install -r requirements.txt
+```text
+event_id + row_number + column_number
