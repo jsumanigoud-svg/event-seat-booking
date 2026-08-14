@@ -4,31 +4,31 @@ A full-stack event seat booking system with admin authentication, event manageme
 
 ## Live Demo
 
-**Frontend:**  
+**Frontend:**
 https://event-seat-booking-3wu8odltt-event-seat-booking.vercel.app
 
-**Backend API:**  
+**Backend API:**
 https://event-seat-booking-pkru.onrender.com
 
-**Swagger API Documentation:**  
+**Swagger API Documentation:**
 https://event-seat-booking-pkru.onrender.com/docs
 
 ---
 
 ## Features
 
-- Admin authentication using JWT
-- Admin event creation
-- Dynamic seat generation
-- Seat selection
-- Seat booking
-- Prevention of duplicate seat bookings
-- Database-level concurrency protection
-- MySQL database
-- REST API using FastAPI
-- Next.js frontend
-- Responsive seat-booking interface
-- CORS configuration for deployed frontend
+* Admin authentication using JWT
+* Admin event creation
+* Dynamic seat generation
+* Seat selection
+* Seat booking
+* Prevention of duplicate seat bookings
+* Database-level concurrency protection
+* MySQL database
+* REST API using FastAPI
+* Next.js frontend
+* Responsive seat-booking interface
+* CORS configuration for deployed frontend
 
 ---
 
@@ -36,26 +36,26 @@ https://event-seat-booking-pkru.onrender.com/docs
 
 ### Frontend
 
-- Next.js
-- React
-- TypeScript
+* Next.js
+* React
+* TypeScript
 
 ### Backend
 
-- FastAPI
-- Python
-- SQLAlchemy
-- JWT authentication
+* FastAPI
+* Python
+* SQLAlchemy
+* JWT authentication
 
 ### Database
 
-- MySQL
+* MySQL
 
 ### Deployment
 
-- Vercel — Frontend
-- Render — Backend
-- MySQL — Live database
+* Vercel — Frontend
+* Render — Backend
+* MySQL — Live database
 
 ---
 
@@ -67,9 +67,9 @@ The system uses the following main tables:
 
 Stores administrator login credentials.
 
-- `id`
-- `username`
-- `password_hash`
+* `id`
+* `username`
+* `password_hash`
 
 Passwords are stored as hashed values rather than plain text.
 
@@ -77,40 +77,36 @@ Passwords are stored as hashed values rather than plain text.
 
 Stores event information.
 
-- `id`
-- `name`
-- `event_date`
-- `rows`
-- `columns`
+* `id`
+* `name`
+* `event_date`
+* `rows`
+* `columns`
 
 ### Seat
 
 Stores individual seats belonging to an event.
 
-- `id`
-- `event_id`
-- `row_number`
-- `column_number`
-- `is_blocked`
+* `id`
+* `event_id`
+* `row_number`
+* `column_number`
+* `is_blocked`
 
 Each seat belongs to an event.
 
-A unique constraint on:
-
-
-event_id + row_number + column_number
-## Database Design (continued)
+A unique constraint on `(event_id, row_number, column_number)` ensures that the same seat position cannot be created more than once within an event.
 
 ### Booking
 
 Stores confirmed seat bookings.
 
-- `id`
-- `event_id`
-- `seat_id`
-- `booker_name`
-- `booker_email`
-- `created_at`
+* `id`
+* `event_id`
+* `seat_id`
+* `booker_name`
+* `booker_email`
+* `created_at`
 
 A unique constraint on `(event_id, seat_id)` ensures a seat can only be booked once per event at the database level, independent of any application-level check.
 
@@ -120,20 +116,19 @@ A unique constraint on `(event_id, seat_id)` ensures a seat can only be booked o
 
 To prevent double-booking when two requests target the same seat at nearly the same time:
 
-- The booking endpoint wraps the check-and-insert in a single database transaction.
-- [Choose one and delete the other:]
-  - A unique constraint on `(event_id, seat_id)` in the `bookings` table causes the second concurrent insert to fail with an integrity error, which the API catches and returns as `409 Conflict`.
-  - Row-level locking (`SELECT ... FOR UPDATE`) is used on the seat row during the check, so a second request blocks until the first transaction commits or rolls back, then sees the seat as unavailable.
-- For multi-seat bookings, all seats in a request are validated and inserted within the same transaction — if any seat is already taken, the entire transaction rolls back and no seats are booked (all-or-nothing).
+* The booking endpoint wraps the check-and-insert in a single database transaction.
+* A unique constraint on `(event_id, seat_id)` in the `bookings` table causes the second concurrent insert to fail with an integrity error, which the API catches and returns as `409 Conflict`.
+* For multi-seat bookings, all seats in a request are validated and inserted within the same transaction. If any seat is already taken, the entire transaction rolls back and no seats are booked (all-or-nothing).
 
-**Tested by:** firing two booking requests for the same seat in quick succession — one returns `201 Created`, the other returns `409 Conflict` with a clear error message.
+**Tested by:** firing two booking requests for the same seat in quick succession — one returns `201 Created`, and the other returns `409 Conflict` with a clear error message.
 
 ---
 
 ## Admin Dashboard
 
 The admin panel includes a booking summary per event showing:
-- Total seats
-- Seats booked
-- Seats available
-- A list of individual bookings (seat number, booker name/email, timestamp)
+
+* Total seats
+* Seats booked
+* Seats available
+* A list of individual bookings (seat number, booker name/email, timestamp)
